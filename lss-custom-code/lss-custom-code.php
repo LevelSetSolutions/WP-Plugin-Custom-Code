@@ -32,16 +32,27 @@
 	}
 	add_action('init','lss_custom_code_init');
 
-	function lss_custom_code_add_to_post() {
+	// OUTPUT CSS ON PAGE/POST
+
+	function lss_custom_code_add_to_header() {
 		
 		global $post; 	//get current post
 		$customCSS = get_post_meta( $post->ID, '_lss_custom_code_css' );
-
-			echo '<style> ' . $customCSS[0] . ' </style>';
-		//wp_add_inline_style( 'inline-custom-style', $customCSS[0] );
-		//wp_enqueue_style( 'prefix-style', plugins_url('style.css', __FILE__) );
+		if ($customCSS[0] != "") echo '<style> ' . $customCSS[0] . ' </style>';
 	}
-	add_action('wp_head', 'lss_custom_code_add_to_post');
+	add_action('wp_head', 'lss_custom_code_add_to_header');
+
+	// OUTPUT JAVASCRIPT ON PAGE/POST
+
+	function lss_custom_code_add_to_footer() {
+		
+		global $post; 	//get current post
+		$customJavaScript = get_post_meta( $post->ID, '_lss_custom_code_javascript' );
+		if ($customJavaScript[0] != "") {
+			echo '<script> ' . $customJavaScript[0] . ' </script>';
+		}
+	}
+	add_action('wp_footer', 'lss_custom_code_add_to_footer');
 
 
 // PAGE & POST EDIT SCREEN
