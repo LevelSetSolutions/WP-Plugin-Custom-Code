@@ -48,12 +48,12 @@
 
 			// JavaScript Box
 
-			// add_meta_box(
-			// 	'lss_custom_code_javascript_box',
-			// 	__( 'Custom Javascript', 'lss_custom_code_textdomain' ),
-			// 	'lss_custom_code_meta_box_callback',
-			// 	$screen
-			// );
+			add_meta_box(
+				'lss_custom_code_javascript_box',
+				__( 'Custom Javascript', 'lss_custom_code_textdomain' ),
+				'lss_custom_code_meta_box_callback',
+				$screen, 'advanced', 'low', array( 'code' => 'javascript')
+			);
 			
 			// CSS box
 
@@ -61,7 +61,7 @@
 				'lss_custom_code_css_box',
 				__( 'Custom CSS', 'lss_custom_code_textdomain' ),
 				'lss_custom_code_meta_box_callback',
-				$screen
+				$screen, 'advanced', 'low', array( 'code' => 'css')
 			);		
 		}
 	}
@@ -72,18 +72,20 @@
  * @param WP_Post $post - the object for the current post/page
  */
 
-	function lss_custom_code_meta_box_callback( $post ) {
+	function lss_custom_code_meta_box_callback( $post, $metabox ) {
+
+		$typeOfCode = $metabox['args']['code'];		//javascript or css
 
 		// add an nonce field so we can check for it later.
 		wp_nonce_field( 'lss_custom_code_meta_box', 'lss_custom_code_meta_box_nonce' );
 
 		// retrieve existing value from database	
-		$value = get_post_meta( $post->ID, '_lss_custom_code_css', true );
+		$value = get_post_meta( $post->ID, '_lss_custom_code_' . $typeOfCode, true );
 
 		// echo '<label for="lss_custom_code_new_field">';
 		// _e( 'Description for this field', 'lss_custom_code_textdomain' );
 		// echo '</label> ';
-		echo '<textarea id="lss_custom_code_css" name="lss_custom_code_css" value="' . esc_attr( $value ) . '" rows=5 style="width: 95%;"/>' . $value . '</textarea>';
+		echo '<textarea id="lss_custom_code_' . $typeOfCode . '" name="lss_custom_code_' . $typeOfCode . '" value="' . esc_attr( $value ) . '" rows=5 style="width: 95%;"/>' . $value . '</textarea>';
 	}
 
 /**
@@ -120,14 +122,22 @@
 
 		// it is now safe for us to save the data
 
-		if ( ! isset( $_POST['lss_custom_code_css'] ) ) {
+		if ( ! isset( $_POST['lss_custom_code_javascript'] ) && ! isset( $_POST['lss_custom_code_css'] ) ) {
 			return;
 		}
-
-		// sanitize user input
-		$my_data = sanitize_text_field( $_POST['lss_custom_code_css'] );
-
-		// update meta field in database
-		update_post_meta( $post_id, '_lss_custom_code_css', $my_data );
+		else {
+			if ( isset( $_POST['lss_custom_code_javascript'] )) {
+				// sanitize user input
+				$myJavaScript = sanitize_text_field( $_POST['lss_custom_code_javascript'] );
+				// update meta field in database
+				update_post_meta( $post_id, '_lss_custom_code_javascript', $myJavaScript );
+			}
+			if ( isset( $_POST['lss_custom_code_javascript'] )) {
+				// sanitize user input
+				$myCSS = sanitize_text_field( $_POST['lss_custom_code_css'] );
+				// update meta field in database
+				update_post_meta( $post_id, '_lss_custom_code_css', $myCSS );
+			}
+		}
 	}
 	add_action( 'save_post', 'lss_custom_code_save_meta_box_data' );
