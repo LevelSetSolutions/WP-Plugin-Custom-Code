@@ -9,7 +9,7 @@
 	License: 
 */
 
-//SETUP
+// SETUP
 
 	function lss_custom_code_install() {
 		    //Do some installation work
@@ -17,7 +17,7 @@
 	}
 	register_activation_hook(__FILE__,'lss_custom_code_install');
 
-//SCRIPTS
+// SCRIPTS
 
 	function lss_custom_code_scripts(){
 		wp_register_script('lss_custom_code_script', plugin_dir_url( __FILE__ ).'js/lss-custom-code.js');
@@ -25,20 +25,16 @@
 	}
 	add_action('wp_enqueue_scripts','lss_custom_code_scripts');
 
-//HOOKS
 
+// HOOKS
+	
+	function lss_custom_code_init(){	
+	}
 	add_action('init','lss_custom_code_init');
 
-	/* FUNCTIONS */
-	
-	function lss_custom_code_init(){
-		run_sub_process();
-	}
-	function run_sub_process(){
-	}
+// PAGE & POST EDIT SCREEN
 
-
-// Add JavaScript and CSS boxes to page/post edit screens
+	// Add JavaScript and CSS boxes
 
 	function lss_custom_code_add_meta_boxes() {
 
@@ -67,10 +63,10 @@
 	}
 	add_action( 'add_meta_boxes', 'lss_custom_code_add_meta_boxes' );
 
-/**
- * Print the box content
- * @param WP_Post $post - the object for the current post/page
- */
+	/**
+	 * Print the box content
+	 * @param WP_Post $post - the object for the current post/page
+	 */
 
 	function lss_custom_code_meta_box_callback( $post, $metabox ) {
 
@@ -88,10 +84,10 @@
 		echo '<textarea id="lss_custom_code_' . $typeOfCode . '" name="lss_custom_code_' . $typeOfCode . '" value="' . esc_attr( $value ) . '" rows=5 style="width: 95%;"/>' . $value . '</textarea>';
 	}
 
-/**
- * Save the content
- * @param int $post_id - the ID of the post being saved
- */
+	/**
+	 * Save the content
+	 * @param int $post_id - the ID of the post being saved
+	 */
 
 	function lss_custom_code_save_meta_box_data( $post_id ) {
 
