@@ -36,3 +36,98 @@
 	}
 	function run_sub_process(){
 	}
+
+
+// Add JavaScript and CSS boxes to page/post edit screens
+
+	function lss_custom_code_add_meta_boxes() {
+
+		$screens = array( 'post', 'page' );		// what about custom post types?
+
+		foreach ( $screens as $screen ) {
+
+			// JavaScript Box
+
+			// add_meta_box(
+			// 	'lss_custom_code_javascript_box',
+			// 	__( 'Custom Javascript', 'lss_custom_code_textdomain' ),
+			// 	'lss_custom_code_meta_box_callback',
+			// 	$screen
+			// );
+			
+			// CSS box
+
+			add_meta_box(
+				'lss_custom_code_css_box',
+				__( 'Custom CSS', 'lss_custom_code_textdomain' ),
+				'lss_custom_code_meta_box_callback',
+				$screen
+			);		
+		}
+	}
+	add_action( 'add_meta_boxes', 'lss_custom_code_add_meta_boxes' );
+
+/**
+ * Print the box content
+ * @param WP_Post $post - the object for the current post/page
+ */
+
+	function lss_custom_code_meta_box_callback( $post ) {
+
+		// add an nonce field so we can check for it later.
+		wp_nonce_field( 'lss_custom_code_meta_box', 'lss_custom_code_meta_box_nonce' );
+
+		// retrieve existing value from database	
+		$value = get_post_meta( $post->ID, '_lss_custom_code_css', true );
+
+		// echo '<label for="lss_custom_code_new_field">';
+		// _e( 'Description for this field', 'lss_custom_code_textdomain' );
+		// echo '</label> ';
+		echo '<textarea id="lss_custom_code_css" name="lss_custom_code_css" value="' . esc_attr( $value ) . '" rows=5 style="width: 95%;"/>' . $value . '</textarea>';
+	}
+
+/**
+ * Save the content
+ * @param int $post_id - the ID of the post being saved
+ */
+
+	function lss_custom_code_save_meta_box_data( $post_id ) {
+
+		// verify this came from our screen and with proper authorization, because the save_post action can be triggered at other times
+
+			// check if our nonce is set
+			if ( ! isset( $_POST['lss_custom_code_meta_box_nonce'] ) ) {
+				return;
+			}
+			// verify that the nonce is valid
+			if ( ! wp_verify_nonce( $_POST['lss_custom_code_meta_box_nonce'], 'lss_custom_code_meta_box' ) ) {
+				return;
+			}
+			// if autosave, our form has not been submitted, so don't do anything
+			if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+				return;
+			}
+			// Check the user's permissions
+			if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+				if ( ! current_user_can( 'edit_page', $post_id ) ) { 	// POST
+					return;
+				}
+			} else {
+				if ( ! current_user_can( 'edit_post', $post_id ) ) { 	// PAGE
+					return;
+				}
+			}
+
+		// it is now safe for us to save the data
+
+		if ( ! isset( $_POST['lss_custom_code_css'] ) ) {
+			return;
+		}
+
+		// sanitize user input
+		$my_data = sanitize_text_field( $_POST['lss_custom_code_css'] );
+
+		// update meta field in database
+		update_post_meta( $post_id, '_lss_custom_code_css', $my_data );
+	}
+	add_action( 'save_post', 'lss_custom_code_save_meta_box_data' );
