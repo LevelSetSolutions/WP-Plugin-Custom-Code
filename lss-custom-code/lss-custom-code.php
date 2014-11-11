@@ -32,24 +32,62 @@
 	}
 	add_action('init','lss_custom_code_init');
 
-	function my_custom_fonts() {
-		echo '	<style>
-					#lss_custom_code_css,
-					#lss_custom_code_javascript {
-						width: 95%;
-						background-color: rgb(49, 42, 38);
-					}
-					#lss_custom_code_css {
-						color: rgb(255, 205, 0);
-					}
-					#lss_custom_code_javascript {
-						color: rgb(0, 255, 185);
-					} 
-				</style>';
-	}
-	add_action('admin_head', 'my_custom_fonts');
+	// Settings Menu
 
-	// OUTPUT CSS ON PAGE/POST
+	function lss_custom_code_menu() {
+		add_options_page('LSS Custom Code Options', 'LSS Custom Code', 'manage_options', 'lss-custom-code-menu', 'lss_custom_code_options');
+	
+		// register settings
+		add_action( 'admin_init', 'lss_custom_code_register_settings' );
+	}
+	add_action('admin_menu','lss_custom_code_menu');
+
+	function lss_custom_code_options() {
+	    include('admin/lss-custom-code-admin.php');
+	}
+
+	function lss_custom_code_register_settings() {
+		// add the secion
+		add_settings_section(
+			'option_test_section',
+			'Test Options Section',
+			'option_test_section_callback_function',
+			'lss-custom-code-settings-group'
+		);			
+		// Add the field(s)
+		add_settings_field(
+			'lss_option_test',
+			'Testing an option',
+			'option_test_callback_function',
+			'lss-custom-code-settings-group',
+			'option_test_section'
+		);
+		register_setting( 'lss-custom-code-settings-group', 'lss_option_test' );
+	}
+
+	// ------------------------------------------------------------------
+	// Settings section callback function
+	// This function is needed if we added a new section. This function 
+	// will be run at the start of our section
+
+	function option_test_section_callback_function() {
+		echo '<p>Intro text for our settings section</p>';
+	}
+
+	// ------------------------------------------------------------------
+	// Callback function for our example setting
+	// creates a checkbox true/false option. Other types are surely possible
+
+	function option_test_callback_function() {
+		echo '<input name="lss_option_test" id="lss_option_test" type="checkbox" value="1" class="code" ' . checked( 1, get_option( 'lss_option_test' ), false ) . ' /> Option Test Checkbox';
+	}
+
+
+
+
+
+
+	// Output CSS on post/page load
 
 	function lss_custom_code_add_to_header() {
 		
@@ -59,7 +97,7 @@
 	}
 	add_action('wp_head', 'lss_custom_code_add_to_header');
 
-	// OUTPUT JAVASCRIPT ON PAGE/POST
+	// Output JavaScript on post/page load
 
 	function lss_custom_code_add_to_footer() {
 		
@@ -177,3 +215,22 @@
 		}
 	}
 	add_action( 'save_post', 'lss_custom_code_save_meta_box_data' );
+
+	// Style the boxes
+
+	function my_custom_fonts() {
+		echo '	<style>
+					#lss_custom_code_css,
+					#lss_custom_code_javascript {
+						width: 95%;
+						background-color: rgb(49, 42, 38);
+					}
+					#lss_custom_code_css {
+						color: rgb(255, 205, 0);
+					}
+					#lss_custom_code_javascript {
+						color: rgb(0, 255, 185);
+					} 
+				</style>';
+	}
+	add_action('admin_head', 'my_custom_fonts');
