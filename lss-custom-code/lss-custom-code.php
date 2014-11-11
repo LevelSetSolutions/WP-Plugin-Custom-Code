@@ -32,6 +32,23 @@
 	}
 	add_action('init','lss_custom_code_init');
 
+	function my_custom_fonts() {
+		echo '	<style>
+					#lss_custom_code_css,
+					#lss_custom_code_javascript {
+						width: 95%;
+						background-color: rgb(49, 42, 38);
+					}
+					#lss_custom_code_css {
+						color: rgb(255, 205, 0);
+					}
+					#lss_custom_code_javascript {
+						color: rgb(0, 255, 185);
+					} 
+				</style>';
+	}
+	add_action('admin_head', 'my_custom_fonts');
+
 	// OUTPUT CSS ON PAGE/POST
 
 	function lss_custom_code_add_to_header() {
@@ -47,7 +64,7 @@
 	function lss_custom_code_add_to_footer() {
 		
 		global $post; 	//get current post
-		$customJavaScript = get_post_meta( $post->ID, '_lss_custom_code_javascript' );
+		$customJavaScript = get_post_meta( $post->ID, '_lss_custom_code_javascript' );		// esc_js() ?
 		if ($customJavaScript[0] != "") {
 			echo '<script> ' . $customJavaScript[0] . ' </script>';
 		}
@@ -104,7 +121,7 @@
 		// echo '<label for="lss_custom_code_new_field">';
 		// _e( 'Description for this field', 'lss_custom_code_textdomain' );
 		// echo '</label> ';
-		echo '<textarea id="lss_custom_code_' . $typeOfCode . '" name="lss_custom_code_' . $typeOfCode . '" value="' . esc_attr( $value ) . '" rows=5 style="width: 95%;"/>' . $value . '</textarea>';
+		echo '<textarea id="lss_custom_code_' . $typeOfCode . '" name="lss_custom_code_' . $typeOfCode . '" value="' . esc_attr( $value ) . '" rows=5/>' . $value . '</textarea>';
 	}
 
 	/**
