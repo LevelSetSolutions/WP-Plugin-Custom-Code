@@ -32,6 +32,18 @@
 	}
 	add_action('init','lss_custom_code_init');
 
+	function lss_custom_code_add_to_post() {
+		
+		global $post; 	//get current post
+		$customCSS = get_post_meta( $post->ID, '_lss_custom_code_css' );
+
+			echo '<style> ' . $customCSS[0] . ' </style>';
+		//wp_add_inline_style( 'inline-custom-style', $customCSS[0] );
+		//wp_enqueue_style( 'prefix-style', plugins_url('style.css', __FILE__) );
+	}
+	add_action('wp_head', 'lss_custom_code_add_to_post');
+
+
 // PAGE & POST EDIT SCREEN
 
 	// Add JavaScript and CSS boxes
