@@ -9,7 +9,7 @@
     	settings_fields( 'lss-custom-code-settings-group' );
     	do_settings_sections( 'lss-custom-code-settings-group' );
     ?>
-    <!-- you can define fields via the 2 functions above, or you can place them as they are below: -->
+    <!-- you can define fields via the 2 functions above (preferred), or you can place them as they are below: -->
 
 	<table class="form-table">
 		<tr>

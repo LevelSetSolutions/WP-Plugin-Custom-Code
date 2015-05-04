@@ -1,0 +1,26 @@
+
+ACF method:
+
+	CSS (in header):
+
+		<?php //if(is_page($post->ID)): ?>
+			<?php //$custom_css = get_field('css'); ?>
+			<?php //if(!empty($custom_css)): ?>
+				<!--<style type="text/css">-->
+					<?php //echo html_entity_decode($custom_css); ?>
+				<!--</style>-->
+			<?php //endif; ?>
+		<?php //endif; ?>
+
+	JavaScript (in footer):
+
+		<?php //if(is_page($post->ID)): ?>
+			<?php //$custom_js = get_field('js'); ?>
+			<?php //if(!empty($custom_js)): ?>
+				<!--<script type="text/javascript">
+				(function() {
+					<?php //echo html_entity_decode($custom_js); ?>
+				})();
+				</script>-->
+			<?php //endif; ?>
+		<?php //endif; ?>	
